@@ -9,22 +9,59 @@ import avocado from "./assets/image6.jpeg";
 
 const images = [cabbage, mango, fig, gaze, peach, avocado];
 
-const App = () => {
-  const [currentImage, setCurrentImage] = useState(200);
+const Loading = ({ calculatedWidth }) => (
+  <aside>
+    <div className="loading-bar">
+      <label htmlFor="images-loaded">Loading all your favorite images...</label>
+      <progress if="images-loaded" max="100" value={calculatedWidth}></progress>
+    </div>
+  </aside>
+);
 
-  console.log(currentImage);
+const App = () => {
+  const [currentImage, setCurrentImage] = useState(0);
+  const [numLoaded, setNumLoaded] = useState(0);
+
+  const handleClick = () => {
+    const length = images.length - 1;
+    setCurrentImage((currentImage) => {
+      return currentImage < length ? currentImage + 1 : 0;
+    });
+  };
+
+  const handleImageLoad = () => {
+    setNumLoaded((numLoaded) => numLoaded + 1);
+  };
+
   return (
-    <div className="App">
-      <div className="title">
+    <section>
+      <header>
         <h1>Zesty</h1>
         <h2>
           A photography project <br /> by Ella Fieldling
         </h2>
-      </div>
-      <div className="image-container">
-        <img alt="" src={images[2]} />
-      </div>
-    </div>
+      </header>
+
+      <figure>
+        {numLoaded < images.length && (
+          <Loading calculatedWidth={(numLoaded / images.length) * 100} />
+        )}
+        <figcaption>
+          {currentImage + 1} / {images.length}
+        </figcaption>
+        {images.map((imageURL, index) => (
+          <img
+            alt=""
+            key={imageURL}
+            src={imageURL}
+            onClick={handleClick}
+            onLoad={handleImageLoad}
+            // style={{ opacity: currentImage === index ? 1 : 0 }}
+            className={currentImage === index ? "display" : "hide"}
+          />
+        ))}
+      </figure>
+    </section>
   );
 };
 
